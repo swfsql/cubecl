@@ -371,6 +371,11 @@ impl<Storage: ComputeStorage> MemoryManagement<Storage> {
             // Dropping the handles makes the slices free again; the slices themselves stay in the
             // pool, which is the point.
             capture.primed.clear();
+            // PATCH(tracel-ai/burn#5772, "Related: a capture needs ~3× a pass's
+            // memory"): pin only what the recording touches — the warm-ups'
+            // slices are not the graph's. Pairs with burn's `capture` priming
+            // only its last warm-up.
+            capture.touched.clear();
         }
     }
 
